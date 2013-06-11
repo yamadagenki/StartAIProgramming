@@ -10,11 +10,17 @@ def getsource(source)
 end
 
 def iskanji(s)
+  if /(?:\p{Hiragana}^|\p{Katakana}^|[一-龠々])/ =~ s then
+    return true
+  end
   return false
 end
 
 def iskatakana(s)
-  return true
+  if /(?:\p{Hiragana}^|\p{Katakana}|[一-龠々]^)/ =~ s then
+    return true
+  end
+  return false
 end
 
 def typeset(s)
@@ -29,13 +35,31 @@ def isputct(s)
       s=="、" ||
       s=="，" ||
       s=="．"  then
-    return 1;
+    return false
   else
-    return 0;
+    return true
   end
 end
-      
 
+def outputmorph(s)
+  i = 0
+  last = typeset(s[i])
+  for l in 0..s.length()
+    if isputct(s[i]) then
+      now = typeset(s[i])
+      if now != last then
+        puts ""
+        last = now
+      end
+      print s[i]
+      i+=1
+    else
+      puts ""
+      i+=1
+      last = typeset(s[i])
+    end
+  end
+end
 
 def getwidechar(source, n)
   target = Array.new(1,"")
@@ -51,4 +75,4 @@ end
 source = Array.new(1,"")
 numchar = getsource(source)
 target = getwidechar(source, numchar)
-p target
+outputmorph(target)
