@@ -1,0 +1,6 @@
+// 読み上げドライバ speech.hsp
+#packopt hide 1 //画面表示を抑制
+	mmload "out.wav",,2 
+	mmplay
+ end
+	
