@@ -50,10 +50,20 @@ end
 
 def fitness(sgene, lines, lineno)
   fvalue = 0
+  fpenalty=0
   for j in 0..$ruleSize-1
-    fvalue += score(sgene[j], lines, lineno)
+    sscore = score(sgene[j],lines,lineno)
+    fpenalty += sscore*sscore
+    fvalue += sscore
   end
-  return fvalue
+  if fvalue > lineno then
+    fvalue = lineno
+  end
+  totalfitness = fvalue**2 - fpenalty
+  if totalfitness < 0 then
+    totalfitness = 0
+  end
+  return totalfitness
 end
 
 
@@ -221,7 +231,7 @@ lineno = readlines(lines)
 initgene(gene)
 for generation in 0..$gMax-1
   puts "第" + generation.to_s + "世代平均適応度\t" + fave(gene, lines, lineno).to_s
-#  printgene(gene, lines, lineno)
+  # printgene(gene, lines, lineno)
   crossover(midgene, gene, lines, lineno)
   mutation(midgene)
   selection(gene,midgene,lines,lineno)
