@@ -105,7 +105,7 @@ def readlines(lines)
 end
 
 
-def mutation(gene)
+def mutation(midgene)
   for i in 0..$poolSize-1
     for j in 0..$ruleSize-1
       for k in 0..$locusSize-1
@@ -114,6 +114,7 @@ def mutation(gene)
     end
   end
 end
+
 
 
 

@@ -31,7 +31,7 @@ def initgene(gene)
   end
 end
 
-    
+
 def score(singlerule, lines, lineno)
   score = 0
   for l in 0..lineno
@@ -105,17 +105,100 @@ def readlines(lines)
 end
 
 
-def mutation(gene)
-  for i in 0..$poolSize-1
+def mutation(midgene)
+  for i in 0..$poolSize*2-1
     for j in 0..$ruleSize-1
       for k in 0..$locusSize-1
-        gene[i][j][k].replace(("A".bytes.to_a[0] + setrnd(26)).chr)
+        midgene[i][j][k].replace(("A".bytes.to_a[0] + setrnd(26)).chr)
+      end
+    end
+  end
+end
+
+def setfvalue(midgene, fvalue, lines, lineno)
+  for i in 0..$poolSize*2-1
+    fvalue[i] = fitness(midgene[i],lines, lineno)+1
+  end
+end
+
+def sumupfvalue(fvalue)
+  sum = 0
+  for i in 0..$poolSize*2-1
+    sum += fvalue[i]
+  end
+  return sum
+end
+
+def roulette(fvalue, sumf, point)
+  acc = 0
+  point = 0
+  step = setrnd(sumf)
+  while acc < step do
+    point = (point+1)%($poolSize*2)
+    acc += fvalue[point]
+  end
+  fvalue[point] = 0
+  return point
+end
+
+def selection(gene, midgene, lines, lineno)
+  fvalue = Array.new($poolSize*2){ 0 }
+
+  point = 0
+
+  setfvalue(midgene, fvalue, lines, lineno)
+  sumf = sumupfvalue(fvalue)
+  for i in 0..$poolSize-1
+    midpoint = roulette(fvalue, sumf, point)
+    for j in 0..$ruleSize-1
+      for k in 0..$locusSize-1
+        gene[i][j][k] = midgene[midpoint][j][k];
+      end
+    end
+  end
+end
+
+def groulette(fvalue, sumf, point)
+  acc = 0
+  step = setrnd(sumf)
+  while acc < step do
+    point = (point+1)%$poolSize
+    acc += fvalue[point]
+  end
+  return point
+end
+
+def singlecrossover(p1, p2, c1, c2)
+  for j in 0..$ruleSize - 1
+    for k in 0..$locusSize -1
+      if setrnd(2) > 0 then
+        c1[j][k] = p1[j][k]
+        c2[j][k] = p2[j][k]
+      else
+        c1[j][k] = p2[j][k]
+        c2[j][k] = p1[j][k]
       end
     end
   end
 end
 
 
+def crossover(midgene, gene, lines, lineno)
+  gfvalue = Array.new($poolSize){ 0 }
+  for i in 0..$poolSize-1
+    gfvalue[i] = fitness(gene[i], lines, lineno) + 1
+  end
+  gsumf = 0
+  point = 0
+  for i in 0..$poolSize-1
+    gsumf += gfvalue[i]
+  end
+
+  for i in 0..$poolSize-1
+    singlecrossover(gene[point=groulette(gfvalue, gsumf, point)], gene[point=groulette(gfvalue,gsumf,point)],midgene[2*i],midgene[2*i+1])
+  end
+
+end
 
 gene = Array.new($poolSize){
   Array.new($ruleSize){
@@ -123,14 +206,26 @@ gene = Array.new($poolSize){
   }
 }
 
+midgene = Array.new($poolSize*2){
+  Array.new($ruleSize){
+    Array.new($locusSize, "")
+  }
+}
+
+
 lines = Array.new($maxLines){
-    Array.new($lineSize, "")
+  Array.new($lineSize, "")
 }
 
 lineno = readlines(lines)
 initgene(gene)
-for generation in 0..$gMax
+for generation in 0..$gMax-1
   puts "第" + generation.to_s + "世代平均適応度\t" + fave(gene, lines, lineno).to_s
   printgene(gene, lines, lineno)
-  mutation(gene)
+  crossover(midgene, gene, lines, lineno)
+  mutation(midgene)
+  selection(gene,midgene,lines,lineno)
 end
+  puts "第" + $gMax + "世代平均適応度\t" + fave(gene, lines, lineno).to_s
+  printgene(gene, lines, lineno)
+
