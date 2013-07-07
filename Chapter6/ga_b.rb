@@ -34,7 +34,7 @@ end
 
 def score(singlerule, lines, lineno)
   score = 0
-  for l in 0..lineno
+  for l in 0..lineno - 1
     localscore = 0
     for i in 0..$locusSize-1
       if lines[l].index(singlerule[i])!=nil then
@@ -212,19 +212,19 @@ end
 
 gene = Array.new($poolSize){
   Array.new($ruleSize){
-    Array.new($locusSize, " ")
+    Array.new($locusSize){""}
   }
 }
 
 midgene = Array.new($poolSize*2){
   Array.new($ruleSize){
-    Array.new($locusSize, "")
+    Array.new($locusSize){""}
   }
 }
 
 
 lines = Array.new($maxLines){
-  Array.new($lineSize, "")
+  Array.new($lineSize){""}
 }
 
 lineno = readlines(lines)

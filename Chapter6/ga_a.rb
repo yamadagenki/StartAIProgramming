@@ -34,13 +34,18 @@ end
 
 def score(singlerule, lines, lineno)
   score = 0
-  for l in 0..lineno
+  for l in 0..lineno-1
     localscore = 0
     for i in 0..$locusSize-1
+      # puts "lines : " + " (l=" + l.to_s + ") " + lines[l].to_s
+      # puts "singlerule : " + " (l=" + i.to_s + ") " + singlerule[i].to_s
       if lines[l].index(singlerule[i])!=nil then
+        # puts "一致！！"
         localscore += 1
       end
       if localscore >= $locusSize then
+        # puts "完全一致！！"
+        # puts lines[l].to_s + " : " + singlerule.to_s
         score += 1
       end
     end
@@ -202,19 +207,22 @@ end
 
 gene = Array.new($poolSize){
   Array.new($ruleSize){
-    Array.new($locusSize, " ")
+    Array.new($locusSize){
+      ""
+    }
   }
 }
 
 midgene = Array.new($poolSize*2){
   Array.new($ruleSize){
-    Array.new($locusSize, "")
+    Array.new($locusSize){""}
   }
 }
 
 
 lines = Array.new($maxLines){
-  Array.new($lineSize, "")
+  Array.new($lineSize){
+ ""}
 }
 
 lineno = readlines(lines)

@@ -183,7 +183,7 @@ print "あなた："
 
 line = ""
 db = Array.new($maxno){
-  Array.new(2,"")}
+  Array.new(2){""}}
 startch = ""
 
 
