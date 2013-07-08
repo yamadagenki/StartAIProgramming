@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 def getsource(source)
+  tmp = ""
   while l = STDIN.gets
-    source[0] += l.chomp
+    tmp += l.chomp
   end
-  return source[0].length
+  source.replace(tmp)
+  return source.length
 end
 
 def getwidechar(source, n)
-  target = Array.new(1,"")
+  target = ""
   for i in 0..n-1
-    if /[^ -~｡-ﾟ]/ =~ source[0][i] then
-      target[0] += source[0][i]
+    if /[^ -~｡-ﾟ]/ =~ source[i] then
+      target += source[i]
     end
   end
-  return target[0]
+  return target
 end
 
 def iskanji(s)
@@ -73,7 +75,7 @@ def outputp(target, str)
   end
 end
 
-source = Array.new(1,"")
+source = ""
 numchar = getsource(source)
 target = getwidechar(source, numchar)
 
@@ -86,9 +88,7 @@ elsif ARGV[0]=="v" then
   outputp(target,"う")
 elsif ARGV[0]=="a" then
   outputp(target,"い")
-  p 4
 elsif ARGV[0]=="d" then
   outputp(target,"た")
-  p 5
 end
 

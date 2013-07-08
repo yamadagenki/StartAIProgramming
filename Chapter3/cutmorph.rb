@@ -3,10 +3,12 @@
 
 
 def getsource(source)
+  tmp = ""
   while l = STDIN.gets
-    source[0] += l.chomp
+    tmp += l.chomp
   end
-  return source[0].length
+  source.replace(tmp)
+  return source.length
 end
 
 def iskanji(s)
@@ -62,17 +64,17 @@ def outputmorph(s)
 end
 
 def getwidechar(source, n)
-  target = Array.new(1,"")
+  target = ""
   for i in 0..n-1
-    if /[^ -~｡-ﾟ]/ =~ source[0][i] then
-      target[0] += source[0][i]
+    if /[^ -~｡-ﾟ]/ =~ source[i] then
+      target += source[i]
     end
   end
-  return target[0]
+  return target
 end
 
 
-source = Array.new(1,"")
+source = ""
 numchar = getsource(source)
 target = getwidechar(source, numchar)
 outputmorph(target)
